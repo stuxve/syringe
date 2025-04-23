@@ -1,7 +1,7 @@
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/css/font-awesome.min.css
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/css/intlTelInput.css
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/css/parsley.css
-GET|https://atleticodemadrid.pmagallanes.com/clientes.01/css/styles.css?q=1745397006
+GET|https://atleticodemadrid.pmagallanes.com/clientes.01/css/styles.css?q=1745398599
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/css/waitMe.css
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/imagen.php?idHotel=3&idVlan=1&tipo=favicon
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/imagen.php?idHotel=3&idVlan=1&tipo=publicidad1_A
@@ -11,9 +11,9 @@ GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/i18n/es.js
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/intlTelInput.js
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/jquery-3.6.0.min.js
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/parsley.min.js
-GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/script.js?q=1745397006
+GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/script.js?q=1745398599
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/selectFx.js
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/slimScroll.min.js
 GET|https://atleticodemadrid.pmagallanes.com/clientes.01/js/waitMe.js
-POST|https://atleticodemadrid.pmagallanes.com/clientes.01/check.php|aNacimiento=value&aceptarTodas=value&apellido=value&conditions=value&dNacimiento=value&email=value&email-confirmacion=value&mNacimiento=value&nombre=value&publicidad=value&salesforce-email=value&salesforce-firstname=value&salesforce-idCRM=value&salesforce-lastname=value&social-email=value&social-name=value&social-network=value&social-observaciones=value&social-userID=value&social-userT=value&social-userTS=value&tipoAR=value
-POST|https://atleticodemadrid.pmagallanes.com/clientes.01/check.php|ticket-email-autoregistro=value&tipoAR=value
+POST|https://atleticodemadrid.pmagallanes.com/clientes.01/check.php|aNacimiento=&aceptarTodas=&apellido=&conditions=&dNacimiento=&email=&email-confirmacion=&mNacimiento=&nombre=&publicidad=&salesforce-email=&salesforce-firstname=&salesforce-idCRM=&salesforce-lastname=&social-email=&social-name=&social-network=&social-observaciones=&social-userID=&social-userT=&social-userTS=&tipoAR=
+POST|https://atleticodemadrid.pmagallanes.com/clientes.01/check.php|ticket-email-autoregistro=&tipoAR=
