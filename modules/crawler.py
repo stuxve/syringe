@@ -81,7 +81,7 @@ class WebCrawler:
         ajax_pattern = re.compile(r'(\$\.ajax\s*\([^\)]*\)|\$\.\w+\s*\([^\)]*\)|new\s+XMLHttpRequest\s*\(\))', re.DOTALL)
         matches = ajax_pattern.findall(script_text)
         for match in matches:
-            print(f"[DEBUG] Detected AJAX pattern: {match}")
+            #print(f"[DEBUG] Detected AJAX pattern: {match}")
             self.parse_ajax_request(match, current_url)
 
     def parse_ajax_request(self, match, current_url):
@@ -108,7 +108,7 @@ class WebCrawler:
 
         if url:
             final_url = urljoin(current_url, url)
-            print(f"[INFO] Detected AJAX POST to {final_url} with data {data}")
+            #print(f"[INFO] Detected AJAX POST to {final_url} with data {data}")
             self.to_visit.add((final_url, 'POST', tuple(sorted(data.items()))))
             self.found_entries.add(f"POST|{final_url}|{urlencode(data)}")
             self.send_ajax_post(final_url, data)
