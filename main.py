@@ -1,7 +1,7 @@
 # main.py
 
 import argparse
-from modules.extractor import PayloadInjector
+from modules.syringe import PayloadInjector
 from modules.crawler import WebCrawler
 
 def main():
@@ -24,10 +24,8 @@ def main():
     scanner = PayloadInjector()
 
     if args.crawl:
-        print(f"[*] Crawling: {args.url}")
         crawler = WebCrawler(args.url)
-        urls = crawler.get_links()
-        print(f"[+] Found {len(urls)} URLs. Scanning each...")
+        urls = crawler.crawl()
     else:
         urls = [args.url]
 

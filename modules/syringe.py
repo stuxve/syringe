@@ -1,15 +1,15 @@
 import requests
-from utils import prepare_injectable_urls
+from .extractor import prepare_injectable_urls
 import configparser
 import os
 from bs4 import BeautifulSoup
 
 class PayloadInjector:
-    def __init__(self, config_path='syringe.conf', payload_file='payloads.txt'):
+    def __init__(self, config_path='../syringe.conf'):
         self.config = self.load_config(config_path)
-        self.payloads = self.load_payloads(payload_file)
+        #self.payloads = self.load_payloads(payload_file)
         self.session = requests.Session()
-        self.headers = {"User-Agent": "Mozilla/5.0 (SyringeScanner)"}
+        #self.headers = {"User-Agent": "Mozilla/5.0 (SyringeScanner)"}
 
     def load_config(self, path):
         config = configparser.ConfigParser()
@@ -30,6 +30,7 @@ class PayloadInjector:
         results = []
 
         if self.config.getboolean('XSS', fallback=False):
+            self.load_payloads('../payloads/XSS/xss.txt')
             for payload in self.payloads:
                 injectable_urls = prepare_injectable_urls(url, payload)
 
