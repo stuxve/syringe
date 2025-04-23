@@ -2,14 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse, parse_qsl, urlencode
 import re
-import json
 
 class WebCrawler:
     def __init__(self, base_url):
         self.base_url = base_url.rstrip('/')
         self.domain = urlparse(self.base_url).netloc
         self.visited = set()
-        self.to_visit = set([(self.base_url, 'GET')])  # track with method
+        self.to_visit = set([(self.base_url, 'GET')])
         self.found_entries = set()
 
     def normalize_url(self, url):
@@ -40,12 +39,10 @@ class WebCrawler:
                         self.found_entries.add(entry)
                         self.to_visit.add((norm_url, 'GET'))
 
-        # Handle all tags with href or src attributes
         for tag in soup.find_all(True):
             handle_attr(tag, 'href')
             handle_attr(tag, 'src')
 
-        # Handle forms for POST requests and parameter extraction
         for form in soup.find_all('form'):
             action = form.get('action') or current_url
             method = form.get('method', 'get').upper()
@@ -73,65 +70,50 @@ class WebCrawler:
                 else:
                     self.to_visit.add((norm_url, 'GET'))
 
-        # Detect AJAX-like POST requests
         self.detect_ajax_requests(soup, current_url)
 
     def detect_ajax_requests(self, soup, current_url):
-        # Look for script content that triggers POST requests (like $.ajax or $.post)
         for script in soup.find_all('script'):
             if 'ajax' in script.text.lower() or '$.ajax' in script.text:
                 self.extract_ajax_data(script.text, current_url)
 
     def extract_ajax_data(self, script_text, current_url):
-        # Extract AJAX data from the JavaScript using regex
-        # Look for $.ajax, $.post or XMLHttpRequest calls
-        ajax_pattern = re.compile(r'(\$\.ajax\([^\)]*\)|\$\.[a-zA-Z]+\([^\)]*\)|XMLHttpRequest\([^\)]*\))', re.DOTALL)
+        ajax_pattern = re.compile(r'(\$\.ajax\s*\([^\)]*\)|\$\.\w+\s*\([^\)]*\)|new\s+XMLHttpRequest\s*\(\))', re.DOTALL)
         matches = ajax_pattern.findall(script_text)
-        
         for match in matches:
             print(f"[DEBUG] Detected AJAX pattern: {match}")
             self.parse_ajax_request(match, current_url)
 
     def parse_ajax_request(self, match, current_url):
-        # Handle $.ajax or $.post style requests dynamically
         url = None
         data = {}
 
-        # Regex to find the URL and data in the AJAX call
-        url_pattern = re.compile(r'(url\s*[:=]\s*["\'](http[s]?:\/\/[^\s"\']+)["\'])')
-        data_pattern = re.compile(r'(data\s*[:=]\s*\{([^\}]+)\})')
+        url_pattern = re.compile(r"url\s*[:=]\s*['\"]([^'\"]+)['\"]")
+        data_pattern = re.compile(r"data\s*[:=]\s*\{([^}]+)\}")
 
-        # Extract URL
         url_match = url_pattern.search(match)
         if url_match:
-            url = url_match.group(2)
-        
-        # Extract Data (if available)
+            url = url_match.group(1)
+
         data_match = data_pattern.search(match)
         if data_match:
-            raw_data = data_match.group(2)
-            # This will be a string like 'name:"John", age:30'
+            raw_data = data_match.group(1)
             pairs = raw_data.split(',')
             for pair in pairs:
-                key, value = pair.split(':')
-                key = key.strip().strip('"')
-                value = value.strip().strip('"')
-                data[key] = value
-        print("[DEBUG] URL:"+url_match)
+                if ':' in pair:
+                    key, value = pair.split(':', 1)
+                    key = key.strip().strip('"\'')
+                    value = value.strip().strip('"\'')
+                    data[key] = value
+
         if url:
-            final_url = urljoin(current_url, url)  # Resolve relative URLs
-            print(f"[INFO] Detected AJAXES POST to {final_url} with data {data}")
-
-            # Add the AJAX POST request to the queue
+            final_url = urljoin(current_url, url)
+            print(f"[INFO] Detected AJAX POST to {final_url} with data {data}")
             self.to_visit.add((final_url, 'POST', tuple(sorted(data.items()))))
-
-            # Log the request in the results
             self.found_entries.add(f"POST|{final_url}|{urlencode(data)}")
-
             self.send_ajax_post(final_url, data)
 
     def send_ajax_post(self, current_url, data):
-        # Replicate the AJAX POST request dynamically
         try:
             response = requests.post(current_url, data=data, timeout=5, allow_redirects=True)
             if response.status_code == 200:
@@ -148,7 +130,6 @@ class WebCrawler:
                 continue
             self.visited.add(visit_key)
 
-            # Handle GET requests
             if method == 'GET':
                 print(f"[+] Crawling ({method}): {url}")
                 try:
@@ -166,7 +147,6 @@ class WebCrawler:
                 except requests.RequestException:
                     continue
 
-            # Handle POST requests
             elif method == 'POST' and data:
                 print(f"[+] Crawling ({method}): {url} with data {dict(data[0])}")
                 try:
