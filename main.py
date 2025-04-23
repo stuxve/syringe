@@ -9,6 +9,7 @@ def main():
     parser.add_argument("--crawl", action="store_true", help="Enable crawling before scanning")
     parser.add_argument("--url", help="Target URL to scan or start crawling from")
     parser.add_argument("--crawled-list-name", help="Filename to save crawled URLs")
+    parser.add_argument("--custom-headers", help="Custom headers to include in requests, comma-separated (e.g., 'Authorization: Bearer <token>, User-Agent: CustomAgent')")
 
 
     args = parser.parse_args()
@@ -17,7 +18,7 @@ def main():
         print("[-] You must specify --url when using --crawl.")
         return
     elif not args.crawl and not args.url:
-        print("Usage: python main.py --url <URL> [--crawl]")
+        print("Usage: python main.py --crawled-list-name crawled-list-name")
         return
 
     scanner = PayloadInjector()
