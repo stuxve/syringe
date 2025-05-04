@@ -4,13 +4,28 @@ from urllib.parse import urljoin, urlparse, parse_qsl, urlencode
 import re
 
 class WebCrawler:
-    def __init__(self, base_url):
-        self.base_url = base_url.rstrip('/')
-        self.domain = urlparse(self.base_url).netloc
-        self.visited = set()
-        self.to_visit = set([(self.base_url, 'GET')])
-        self.found_entries = set()
+    def __init__(self, base_urls, multidomain=False):
+        """
+        :param base_urls: List of base URLs from a text file
+        :param multidomain: Enable crawling across multiple domains
+        """
+        if isinstance(base_urls, str):
+            base_urls = [base_urls]
 
+        # Normalize URLs and strip trailing slashes
+        self.base_urls = [url.rstrip('/') for url in base_urls]
+        self.multidomain = multidomain
+
+        # Parse base domains
+        self.domains = list({urlparse(url).netloc.lower() for url in self.base_urls})
+
+        # Use the first domain as the "primary" one
+        self.domain = self.domains[0]
+
+        # Visited, queue, and found entries
+        self.visited = set()
+        self.to_visit = set((url, 'GET') for url in self.base_urls)
+        self.found_entries = set()
         # Add cookies here
         self.cookies = {
             "aliyungf_tc": "3b87eba4937c06811b78ffc2a5f0317824babd0e3ca7357c9a3fd47e1dca0358",
@@ -58,8 +73,10 @@ class WebCrawler:
         return normalized_url
 
     def is_valid(self, url):
-        parsed = urlparse(url)
-        return parsed.netloc == self.domain
+        netloc = urlparse(url).netloc.lower()
+        if self.multidomain:
+            return any(netloc == d or netloc.endswith(f".{d}") for d in self.domains)
+        return netloc == self.domain
 
     def extract_links_and_forms(self, html, current_url):
         soup = BeautifulSoup(html, 'html.parser')
